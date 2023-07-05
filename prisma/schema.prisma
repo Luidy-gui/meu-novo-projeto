@@ -1,0 +1,52 @@
+generator client {
+  // learn more about it in the docs: https://pris.ly/d/prisma-schema
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Usuario {
+  id       String    @id @default(uuid())
+  nome     String
+  email    String    @unique
+  senha    String
+  receitas Receita[]
+  despesas Despesa[]
+
+  @@map("usuario")
+}
+
+model Receita {
+  id              String   @id @default(uuid())
+  descricao       String
+  valor           Decimal
+  data            DateTime @default(now())
+  categoria_receita Categoria @relation(fields: [categoria_id], references: [id])
+  categoria_id      String
+  usuario_receita Usuario?  @relation(fields: [usuario_id], references: [id])
+  usuario_id      String?
+  @@map("receitas")
+}
+
+model Despesa {
+  id              String   @id @default(uuid())
+  descricao       String
+  valor           Decimal
+  data            DateTime @default(now())
+  categoria_despesa Categoria @relation(fields: [categoria_id], references: [id])
+  categoria_id      String
+  usuario_despesa Usuario?  @relation(fields: [usuario_id], references: [id])
+  usuario_id      String?
+
+  @@map("despesas")
+}
+
+model Categoria {
+  id             String @id @default(uuid())
+  nome_categoria String
+  receitas Receita[]
+  despesas Despesa[]
+}
